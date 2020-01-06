@@ -7,10 +7,19 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Typescript Debug",
+      "name": "Lib Debug",
       "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}\\dist/server.js",
+      "program": "${workspaceFolder}\\dist/lib/server.js",
       "preLaunchTask": "tsc: build - tsconfig.json",
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Hello World Debug",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}\\dist/examples/helloworld/hello.js",
+      "preLaunchTask": "tsc: build - examples/helloworld/tsconfig.json",
       "outFiles": ["${workspaceFolder}/dist/**/*.js"]
     }
   ]

@@ -1,8 +1,5 @@
 import http, { IncomingMessage, ServerResponse } from "http";
 
-const hostname = "127.0.0.1";
-const port = 3000;
-
 class SirusServer {
   routes: Map<string, Function>;
   server: http.Server;
@@ -24,10 +21,8 @@ class SirusServer {
     this.routes.set(path, handler);
   }
 
-  public listen(port: number, hostname: string) {
-    this.server.listen(port, hostname, () => {
-      console.log(`Server running at http://${hostname}:${port}/`);
-    });
+  public listen(port: number, hostname: string, listener: () => void) {
+    this.server.listen(port, hostname, listener);
   }
 
   private notFoundHandler(req: IncomingMessage, res: ServerResponse) {
@@ -37,19 +32,4 @@ class SirusServer {
   }
 }
 
-const rootHandler = (req: IncomingMessage, res: ServerResponse) => {
-  res.statusCode = 200;
-  res.setHeader("Content-Type", "application/json");
-  res.end("Hello, routing!\n");
-};
-
-const server = new SirusServer();
-
-server.register("/hello", rootHandler);
-server.register("/todo", (req: IncomingMessage, res: ServerResponse) => {
-  res.statusCode = 200;
-  res.setHeader("Content-Type", "application/json");
-  res.end("Todo route\n");
-});
-
-server.listen(port, hostname);
+export default SirusServer;
