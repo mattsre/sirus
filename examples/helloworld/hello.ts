@@ -6,10 +6,16 @@ const port = 3000;
 
 const server = new SirusServer();
 
-server.register("/hello", (req: IncomingMessage, res: ServerResponse) => {
+server.get("/hello", (req: IncomingMessage, res: ServerResponse) => {
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");
   res.end("Hello World!\n");
+});
+
+server.post("/hello", (req: IncomingMessage, res: ServerResponse) => {
+  res.statusCode = 200;
+  res.setHeader("Content-Type", "application/json");
+  res.end("Hello Post Request!\n");
 });
 
 server.listen(port, hostname, () => {
