@@ -1,28 +1,26 @@
 import http, { IncomingMessage, ServerResponse } from "http";
-import { HTTPMethod } from "./http-methods";
-
-type Routes = Map<string, Function>;
-// Map<'HTTP Method', Map<'path', 'handler func'>>;
-type Router = Map<string, Routes>;
+import { RouteHTTPMethods } from "./internals/http-methods";
+import Router from "./internals/router";
+import Matcher from "./internals/matcher";
 
 class SirusServer {
-  router: Router;
-  server: http.Server;
+  private router: Router;
+  private matcher: Matcher;
+  private server: http.Server;
 
   constructor() {
-    this.router = new Map<string, Routes>();
-    Object.entries(HTTPMethod).forEach(([, value]) => {
-      this.router.set(value, new Map<string, Function>());
-    });
+    this.router = new Router();
+    this.matcher = new Matcher(this.router);
+    this.server = http.createServer(
+      (req: IncomingMessage, res: ServerResponse) => {
+        const handler = this.matcher.match(req);
+        if (handler !== undefined) {
+          return handler(req, res);
+        }
 
-    this.server = http.createServer((req, res) => {
-      const handler = this.matcher(req);
-      if (handler !== undefined) {
-        handler(req, res);
-      } else {
-        this.notFoundHandler(req, res);
+        return this.matcher.notFoundHandler(req, res);
       }
-    });
+    );
   }
 
   /**
@@ -31,7 +29,7 @@ class SirusServer {
    * @param handler function to handle matched route
    */
   public get(path: string, handler: Function) {
-    this.register(path, handler, HTTPMethod.GET);
+    this.router.register(path, handler, RouteHTTPMethods.GET);
   }
 
   /**
@@ -40,7 +38,7 @@ class SirusServer {
    * @param handler function to handle matched route
    */
   public post(path: string, handler: Function) {
-    this.register(path, handler, HTTPMethod.POST);
+    this.router.register(path, handler, RouteHTTPMethods.POST);
   }
 
   /**
@@ -49,7 +47,7 @@ class SirusServer {
    * @param handler function to handle matched route
    */
   public put(path: string, handler: Function) {
-    this.register(path, handler, HTTPMethod.PUT);
+    this.router.register(path, handler, RouteHTTPMethods.PUT);
   }
 
   /**
@@ -58,16 +56,7 @@ class SirusServer {
    * @param handler function to handle matched route
    */
   public delete(path: string, handler: Function) {
-    this.register(path, handler, HTTPMethod.DELETE);
-  }
-
-  /**
-   * patch
-   * @param path route to match on
-   * @param handler function to handle matched route
-   */
-  public patch(path: string, handler: Function) {
-    this.register(path, handler, HTTPMethod.PATCH);
+    this.router.register(path, handler, RouteHTTPMethods.DELETE);
   }
 
   /**
@@ -78,24 +67,6 @@ class SirusServer {
    */
   public listen(port: number, hostname: string, listener: () => void) {
     this.server.listen(port, hostname, listener);
-  }
-
-  private matcher(req: IncomingMessage): Function {
-    const methodRoutes = this.router.get(req.method);
-    return methodRoutes.get(req.url);
-  }
-
-  private register(path: string, handler: Function, method: HTTPMethod) {
-    // TODO: Seems pretty inefficient, think about a better way of doing this
-    const methodRoutes = this.router.get(method);
-    methodRoutes.set(path, handler);
-    this.router.set(method, methodRoutes);
-  }
-
-  private notFoundHandler(req: IncomingMessage, res: ServerResponse) {
-    res.statusCode = 404;
-    res.setHeader("Content-Type", "text/plain");
-    res.end("404 - Page Not Found");
   }
 }
 

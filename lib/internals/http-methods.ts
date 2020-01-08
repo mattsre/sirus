@@ -1,4 +1,4 @@
-export enum HTTPMethod {
+export const enum HTTPMethods {
   GET = "GET",
   HEAD = "HEAD",
   POST = "POST",
@@ -8,4 +8,11 @@ export enum HTTPMethod {
   OPTIONS = "OPTIONS",
   TRACE = "TRACE",
   PATCH = "PATCH"
+}
+
+export enum RouteHTTPMethods {
+  GET = "GET",
+  POST = "POST",
+  PUT = "PUT",
+  DELETE = "DELETE"
 }
