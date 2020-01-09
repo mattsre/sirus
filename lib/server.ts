@@ -1,7 +1,9 @@
 import http, { IncomingMessage, ServerResponse } from "http";
 import { RouteHTTPMethods } from "./internals/http-methods";
-import Router from "./internals/router";
+import Router, { UserRouteType } from "./internals/router";
 import Matcher from "./internals/matcher";
+import { SirusRequest } from "./internals/request";
+import { SirusResponse } from "./internals/response";
 
 class SirusServer {
   private router: Router;
@@ -15,10 +17,10 @@ class SirusServer {
       (req: IncomingMessage, res: ServerResponse) => {
         const handler = this.matcher.match(req);
         if (handler !== undefined) {
-          return handler(req, res);
+          return handler(req as SirusRequest, res as SirusResponse);
         }
 
-        return this.matcher.notFoundHandler(req, res);
+        return this.matcher.defaultNotFoundHandler(req, res);
       }
     );
   }
@@ -28,7 +30,7 @@ class SirusServer {
    * @param path route to match on
    * @param handler function to handle matched route
    */
-  public get(path: string, handler: Function) {
+  public get(path: UserRouteType, handler: Function) {
     this.router.register(path, handler, RouteHTTPMethods.GET);
   }
 
@@ -37,7 +39,7 @@ class SirusServer {
    * @param path route to match on
    * @param handler function to handle matched route
    */
-  public post(path: string, handler: Function) {
+  public post(path: UserRouteType, handler: Function) {
     this.router.register(path, handler, RouteHTTPMethods.POST);
   }
 
@@ -46,7 +48,7 @@ class SirusServer {
    * @param path route to match on
    * @param handler function to handle matched route
    */
-  public put(path: string, handler: Function) {
+  public put(path: UserRouteType, handler: Function) {
     this.router.register(path, handler, RouteHTTPMethods.PUT);
   }
 
@@ -55,7 +57,7 @@ class SirusServer {
    * @param path route to match on
    * @param handler function to handle matched route
    */
-  public delete(path: string, handler: Function) {
+  public delete(path: UserRouteType, handler: Function) {
     this.router.register(path, handler, RouteHTTPMethods.DELETE);
   }
 

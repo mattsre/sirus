@@ -12,10 +12,10 @@ server.get("/hello", (req: IncomingMessage, res: ServerResponse) => {
   res.end("Hello World!\n");
 });
 
-server.post("/hello", (req: IncomingMessage, res: ServerResponse) => {
+server.get("/hello/:name", (req: IncomingMessage, res: ServerResponse) => {
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");
-  res.end("Hello Post Request!\n");
+  res.end("Hello Name Route!\n");
 });
 
 server.listen(port, hostname, () => {
