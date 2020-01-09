@@ -15,9 +15,9 @@ class SirusServer {
     this.matcher = new Matcher(this.router);
     this.server = http.createServer(
       (req: IncomingMessage, res: ServerResponse) => {
-        const handler = this.matcher.match(req);
-        if (handler !== undefined) {
-          return handler(req as SirusRequest, res as SirusResponse);
+        const route = this.matcher.match(req as SirusRequest);
+        if (route !== undefined) {
+          return route.handler(req as SirusRequest, res as SirusResponse);
         }
 
         return this.matcher.defaultNotFoundHandler(req, res);

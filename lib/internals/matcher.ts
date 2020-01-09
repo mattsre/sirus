@@ -1,27 +1,33 @@
-import { IncomingMessage, ServerResponse } from "http";
-import Router from "./router";
-import Parser from "./parser";
+import Router, { RegisteredRoute } from "./router";
+import { SirusRequest } from "./request";
+import { SirusResponse } from "./response";
 
 class Matcher {
   private router: Router;
-  private parser: Parser;
 
   constructor(router: Router) {
     this.router = router;
-    this.parser = new Parser();
   }
 
-  public match(req: IncomingMessage): Function {
+  public match(req: SirusRequest): RegisteredRoute {
     const methodRoutes = this.router.routes.get(req.method);
     for (const [key, val] of methodRoutes.entries()) {
       const result = req.url.match(key);
       if (result) {
+        if (val.paramNames.length !== 0) {
+          req.params = {};
+          for (let i = 1; i < result.length; i++) {
+            req.params[val.paramNames[i - 1]] = result[i];
+          }
+        }
         return val;
       }
     }
+
+    return undefined;
   }
 
-  public defaultNotFoundHandler(req: IncomingMessage, res: ServerResponse) {
+  public defaultNotFoundHandler(req: SirusRequest, res: SirusResponse) {
     res.statusCode = 404;
     res.setHeader("Content-Type", "text/plain");
     res.end("404 - Page Not Found");

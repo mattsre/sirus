@@ -1,5 +1,5 @@
 import { ServerResponse } from "http";
 
 export interface SirusResponse extends ServerResponse {
-  params?: any;
+  cache_key?: any;
 }
