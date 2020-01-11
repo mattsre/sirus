@@ -15,15 +15,12 @@ class Parser {
       const param = v.match(routeParamRegex);
       if (param) {
         paramNames.push(param.input.substr(1));
-        v = "([^/]*)$";
+        v = "([^/]*)";
       }
       resultRegex += `/${v}`;
     });
 
-    // This is a poor solution, needs to be improved
-    if (paramNames.length === 0) {
-      resultRegex += "$";
-    }
+    resultRegex += "$";
 
     return {
       routeKey: resultRegex,

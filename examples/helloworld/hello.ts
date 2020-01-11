@@ -19,6 +19,20 @@ server.get("/hello/:name", (req: SirusRequest, res: SirusResponse) => {
   res.end(`Hello ${req.params.name} Route!\n`);
 });
 
+server.get(
+  "/hello/:name/testing/:id",
+  (req: SirusRequest, res: SirusResponse) => {
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "application/json");
+    res.end(
+      JSON.stringify({
+        name: req.params.name,
+        id: req.params.id
+      })
+    );
+  }
+);
+
 server.listen(port, hostname, () => {
   console.log(`Listening on http://${hostname}:${port}`);
 });
