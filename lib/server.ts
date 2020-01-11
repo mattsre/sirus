@@ -4,6 +4,7 @@ import Router, { UserRouteType } from "./internals/router";
 import Matcher from "./internals/matcher";
 import { SirusRequest } from "./internals/request";
 import { SirusResponse } from "./internals/response";
+import "../internals/response"; // Required to initialize ServerResponse prototype
 
 class SirusServer {
   private router: Router;

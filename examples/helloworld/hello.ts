@@ -20,16 +20,14 @@ server.get("/hello/:name", (req: SirusRequest, res: SirusResponse) => {
 });
 
 server.get(
-  "/hello/:name/testing/:id",
+  "/hello/:name/example/:id",
   (req: SirusRequest, res: SirusResponse) => {
     res.statusCode = 200;
     res.setHeader("Content-Type", "application/json");
-    res.end(
-      JSON.stringify({
-        name: req.params.name,
-        id: req.params.id
-      })
-    );
+    res.json({
+      name: req.params.name,
+      id: req.params.id
+    });
   }
 );
 
